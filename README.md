@@ -30,5 +30,14 @@ Las credenciales y los datos de destinatario van en `.dev.vars` localmente y en 
 - Chunk 1 completado: base, reglas y herramientas. Tipos, lint, formato, prueba de superficie pública y empaquetado verificados.
 - Chunk 2 completado: cliente SIME con validación, límites de tiempo y reintentos acotados. Siete pruebas pasan; fixtures de datos públicos del 22/10/2026.
 - Chunk 3 completado: selección hasta secundaria, fechas argentinas, eventos y bloqueo de concurrencia en D1. Quince pruebas pasan dentro del entorno de Workers.
+- Chunk 4 completado: correo HTML/texto, proveedor Resend, cuerpo inmutable y reintentos con clave estable. Veintitrés pruebas pasan; aún no se hicieron envíos reales.
 - Envío real y programación desactivados hasta completar las verificaciones.
 - Dominio existente con correo Zoho: no modificar sus MX ni trasladar DNS para esta herramienta.
+
+## Envío de correo
+
+Proveedor: Resend Free, aprovechando el subdominio remitente existente y verificado en el ecosistema Aramis. La herramienta necesita su propia clave restringida a envío, `EMAIL_FROM` y `ALERT_RECIPIENT`.
+
+Se envían hasta cinco novedades por ejecución y se limita a cincuenta intentos por día argentino. Los correos conservan su destinatario y contenido desde el primer intento. Resend conserva las claves de idempotencia durante 24 horas: las recuperaciones se detienen a las 23 horas para revisión manual, sin arriesgar un reenvío después de esa ventana. Un estado `sent` significa aceptación por el proveedor, no lectura ni llegada confirmada a la bandeja de entrada.
+
+El correo existente de Zoho y el dominio raíz quedan fuera de los cambios de esta herramienta.
