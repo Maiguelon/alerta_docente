@@ -29,5 +29,6 @@ Las credenciales y los datos de destinatario van en `.dev.vars` localmente y en 
 
 - Chunk 1 completado: base, reglas y herramientas. Tipos, lint, formato, prueba de superficie pública y empaquetado verificados.
 - Chunk 2 completado: cliente SIME con validación, límites de tiempo y reintentos acotados. Siete pruebas pasan; fixtures de datos públicos del 22/10/2026.
+- Chunk 3 completado: selección hasta secundaria, fechas argentinas, eventos y bloqueo de concurrencia en D1. Quince pruebas pasan dentro del entorno de Workers.
 - Envío real y programación desactivados hasta completar las verificaciones.
 - Dominio existente con correo Zoho: no modificar sus MX ni trasladar DNS para esta herramienta.
