@@ -5,7 +5,15 @@ export default defineConfig(async () => ({
     cloudflareTest({
       wrangler: { configPath: "./wrangler.jsonc" },
       miniflare: {
-        bindings: { TEST_MIGRATIONS: await readD1Migrations("./migrations") },
+        bindings: {
+          TEST_MIGRATIONS: await readD1Migrations("./migrations"),
+          EMAIL_PROVIDER: "disabled",
+          MONITOR_ENABLED: "false",
+          ALERT_RECIPIENT: "recipient@example.test",
+          EMAIL_FROM: "alerts@example.test",
+          RESEND_API_KEY: "test-key",
+          ADMIN_TOKEN: "test-only-".repeat(4),
+        },
       },
     }),
   ],

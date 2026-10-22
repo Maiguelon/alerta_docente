@@ -125,15 +125,17 @@ export class SimeClient {
       try {
         response = await this.http(SIME_BASE + path, {
           headers: { Accept: "application/json" },
-          redirect: "error",
+          redirect: "manual",
           signal: AbortSignal.timeout(10_000),
         });
-      } catch {
+      } catch (error) {
         if (attempt === 0) {
           await this.pause(500);
           continue;
         }
-        throw new SourceError("network_or_timeout");
+        const detail =
+          error instanceof Error ? error.message.slice(0, 160) : "unknown";
+        throw new SourceError("network_or_timeout: " + detail);
       }
       if (!response.ok) {
         if (

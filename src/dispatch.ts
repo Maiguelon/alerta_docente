@@ -23,20 +23,27 @@ export async function dispatch(
   config: MailConfig,
   mailer: Mailer,
   now: number,
+  allowedKeys?: string[],
 ): Promise<number> {
   validateMailConfig(config);
+  if (allowedKeys && !allowedKeys.length) return 0;
+  const restriction = allowedKeys
+    ? " AND vacancy_key IN (" + allowedKeys.map(() => "?").join(",") + ")"
+    : "";
   const day = new Date(now + -3 * 60 * 60_000).toISOString().slice(0, 10);
   const used = await store.db
     .prepare("SELECT attempts FROM send_budget WHERE day=?")
     .bind(day)
     .first<{ attempts: number }>();
-  const available = Math.min(5, 50 - (used?.attempts ?? 0));
+  const available = Math.min(2, 50 - (used?.attempts ?? 0));
   if (available <= 0) return 0;
   const rows = await store.db
     .prepare(
-      "SELECT event_id,payload,attempts,first_attempt_at,request_json FROM outbox WHERE (state='pending' AND next_attempt_at<=?) OR (state='sending' AND lease_until<=?) ORDER BY created_at LIMIT ?",
+      "SELECT event_id,payload,attempts,first_attempt_at,request_json FROM outbox WHERE ((state='pending' AND next_attempt_at<=?) OR (state='sending' AND lease_until<=?))" +
+        restriction +
+        " ORDER BY created_at LIMIT ?",
     )
-    .bind(now, now, available)
+    .bind(now, now, ...(allowedKeys ?? []), available)
     .all<Pending>();
   let sent = 0;
   for (const row of rows.results) {

@@ -69,7 +69,19 @@ export async function fingerprint(alert: Alert): Promise<string> {
     character: alert.vacancy.caracter,
     start: alert.vacancy.fechaPublicacionInicio,
     end: alert.vacancy.fechaPublicacionFin,
-    positions: [...alert.positions].sort((a, b) => a.id - b.id),
+    summary: alert.vacancy.cargos,
+    // Optional address lookup failures must not create false vacancy updates.
+    positions: [...alert.positions]
+      .sort((a, b) => a.id - b.id)
+      .map((p) => ({
+        id: p.id,
+        school: p.establecimiento,
+        cargo: p.cargo,
+        level: p.nivel,
+        modality: p.modalidad,
+        subject: p.materia,
+        cargoId: p.cargos_id,
+      })),
   });
   const digest = await crypto.subtle.digest(
     "SHA-256",

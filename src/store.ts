@@ -75,14 +75,22 @@ export class Store {
     liveKeys: string[],
     now: number,
   ): Promise<void> {
-    const stored = await this.db
-      .prepare("SELECT vacancy_key FROM vacancies WHERE board=? AND active=1")
-      .bind(board)
-      .all<{ vacancy_key: string }>();
-    const live = new Set(liveKeys);
-    for (const row of stored.results)
-      if (!live.has(row.vacancy_key))
-        await this.deactivate(row.vacancy_key, now);
+    const condition = liveKeys.length
+      ? " AND vacancy_key NOT IN (" + liveKeys.map(() => "?").join(",") + ")"
+      : "";
+    await this.db.batch([
+      this.db
+        .prepare(
+          "UPDATE vacancies SET active=0,observed_at=? WHERE board=? AND active=1" +
+            condition,
+        )
+        .bind(now, board, ...liveKeys),
+      this.db
+        .prepare(
+          "UPDATE outbox SET state='expired',updated_at=? WHERE state='pending' AND vacancy_key IN (SELECT vacancy_key FROM vacancies WHERE board=? AND active=0)",
+        )
+        .bind(now, board),
+    ]);
   }
   async setState(key: string, value: string): Promise<void> {
     await this.db

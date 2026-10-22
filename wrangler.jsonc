@@ -11,14 +11,15 @@
     {
       "binding": "DB",
       "database_name": "alerta-docente",
-      "database_id": "00000000-0000-0000-0000-000000000001",
+      "database_id": "a4827ff7-f824-46d4-b811-30ff9938a988",
       "migrations_dir": "migrations",
     },
   ],
   "triggers": {
-    "crons": [],
+    "crons": ["*/10 * * * *"],
   },
   "vars": {
     "EMAIL_PROVIDER": "disabled",
+    "MONITOR_ENABLED": "true",
   },
 }

@@ -41,6 +41,16 @@ describe("SIME public schema", () => {
 });
 
 describe("SIME HTTP failures", () => {
+  it("handles redirects explicitly without following a login or other destination", async () => {
+    const http = vi.fn().mockResolvedValue(
+      new Response("", {
+        status: 302,
+        headers: { Location: "https://example.test/login" },
+      }),
+    );
+    await expect(new SimeClient(http).list(1)).rejects.toThrow("http_302");
+    expect(http.mock.calls[0]?.[1].redirect).toBe("manual");
+  });
   it("retries a transient failure once and sends no credentials", async () => {
     const http = vi
       .fn()
