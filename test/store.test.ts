@@ -21,6 +21,26 @@ beforeEach(async () => {
   );
 });
 describe("D1 event persistence", () => {
+  it("holds an interrupted delivery for review when a newer version supersedes it", async () => {
+    await store.observe(alert, now);
+    await env.DB.prepare("UPDATE outbox SET state='sending',lease_until=?")
+      .bind(now - 1)
+      .run();
+    await store.observe(
+      {
+        ...alert,
+        vacancy: { ...alert.vacancy, fechaPublicacionFin: "27/10/2026 08:00" },
+      },
+      now + 1,
+    );
+    const rows = await env.DB.prepare(
+      "SELECT state FROM outbox ORDER BY event_id",
+    ).all<{ state: string }>();
+    expect(rows.results.map((row) => row.state)).toEqual([
+      "uncertain",
+      "pending",
+    ]);
+  });
   it("queues once, detects changes and expires superseded unsent versions", async () => {
     expect(await store.observe(alert, now)).toBe(true);
     expect(await store.observe(alert, now + 1)).toBe(false);

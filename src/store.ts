@@ -44,7 +44,7 @@ export class Store {
         .bind(key, alert.vacancy.board, hash, version, payload, now),
       this.db
         .prepare(
-          "UPDATE outbox SET state='expired',updated_at=? WHERE vacancy_key=? AND state='pending'",
+          "UPDATE outbox SET state=CASE WHEN state='sending' THEN 'uncertain' ELSE 'expired' END,error_code=CASE WHEN state='sending' THEN 'superseded_during_delivery' ELSE error_code END,updated_at=? WHERE vacancy_key=? AND state IN ('pending','sending')",
         )
         .bind(now, key),
       this.db
@@ -64,7 +64,7 @@ export class Store {
         .bind(now, key),
       this.db
         .prepare(
-          "UPDATE outbox SET state='expired',updated_at=? WHERE vacancy_key=? AND state='pending'",
+          "UPDATE outbox SET state=CASE WHEN state='sending' THEN 'uncertain' ELSE 'expired' END,error_code=CASE WHEN state='sending' THEN 'withdrawn_during_delivery' ELSE error_code END,updated_at=? WHERE vacancy_key=? AND state IN ('pending','sending')",
         )
         .bind(now, key),
     ]);
@@ -87,7 +87,7 @@ export class Store {
         .bind(now, board, ...liveKeys),
       this.db
         .prepare(
-          "UPDATE outbox SET state='expired',updated_at=? WHERE state='pending' AND vacancy_key IN (SELECT vacancy_key FROM vacancies WHERE board=? AND active=0)",
+          "UPDATE outbox SET state=CASE WHEN state='sending' THEN 'uncertain' ELSE 'expired' END,error_code=CASE WHEN state='sending' THEN 'withdrawn_during_delivery' ELSE error_code END,updated_at=? WHERE state IN ('pending','sending') AND vacancy_key IN (SELECT vacancy_key FROM vacancies WHERE board=? AND active=0)",
         )
         .bind(now, board),
     ]);

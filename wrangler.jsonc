@@ -19,7 +19,7 @@
     "crons": ["*/10 * * * *"],
   },
   "vars": {
-    "EMAIL_PROVIDER": "disabled",
+    "EMAIL_PROVIDER": "resend",
     "MONITOR_ENABLED": "true",
   },
 }

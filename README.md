@@ -32,8 +32,9 @@ Las credenciales y los datos de destinatario van en `.dev.vars` localmente y en 
 - Chunk 2 completado: cliente SIME con validación, límites de tiempo y reintentos acotados. Siete pruebas pasan; fixtures de datos públicos del 22/10/2026.
 - Chunk 3 completado: selección hasta secundaria, fechas argentinas, eventos y bloqueo de concurrencia en D1. Quince pruebas pasan dentro del entorno de Workers.
 - Chunk 4 completado: correo HTML/texto, proveedor Resend, cuerpo inmutable y reintentos con clave estable. Veintitrés pruebas pasan; aún no se hicieron envíos reales.
-- Chunk 5: monitor desplegado y acceso desde Cloudflare confirmado (cuatro juntas y 147 publicaciones en la prueba del 22/10/2026). Última comprobación completa sin coincidencias dentro del alcance.
-- Programación activa cada diez minutos; correo desactivado hasta configurar su clave propia.
+- Chunk 5 completado: monitor desplegado y acceso desde Cloudflare confirmado (cuatro juntas y 147 publicaciones en la prueba del 22/10/2026). Última comprobación completa sin coincidencias dentro del alcance.
+- Chunk 6 completado: clave propia restringida al dominio verificado, correo de prueba enviado desde Cloudflare y marcado Delivered por Resend el 22/10/2026 a las 18:18 de Argentina. Una segunda solicitud de prueba reutilizó la aceptación sin otro envío.
+- Programación y correo activos cada diez minutos. Ejecución automática comprobada a las 18:20 del 22/10/2026. Treinta y siete pruebas automáticas pasan.
 - Dominio existente con correo Zoho: no modificar sus MX ni trasladar DNS para esta herramienta.
 
 ## Envío de correo

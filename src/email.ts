@@ -151,7 +151,7 @@ export class ResendMailer {
           "Idempotency-Key": "alerta-docente/" + eventId,
         },
         body: JSON.stringify(message),
-        redirect: "error",
+        redirect: "manual",
         signal: AbortSignal.timeout(10_000),
       });
     } catch {

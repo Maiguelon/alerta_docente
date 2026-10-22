@@ -1,5 +1,7 @@
 import { authorized, run, type Env } from "./app";
 import { Store } from "./store";
+import { testEmail } from "./setup-email";
+import { ResendMailer } from "./email";
 export type { Env } from "./app";
 
 export default {
@@ -42,6 +44,16 @@ export default {
     if (url.pathname.startsWith("/admin/")) {
       if (!(await authorized(request, env)))
         return new Response("Unauthorized", { status: 401 });
+      if (url.pathname === "/admin/test-email" && request.method === "POST") {
+        return Response.json(
+          await testEmail(
+            new Store(env.DB),
+            env,
+            new ResendMailer(env.RESEND_API_KEY ?? ""),
+            Date.now(),
+          ),
+        );
+      }
       if (url.pathname === "/admin/run" && request.method === "POST")
         return Response.json(await run(env));
       if (url.pathname === "/admin/status" && request.method === "GET") {

@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 if (existsSync(".dev.vars")) process.loadEnvFile(".dev.vars");
 const command = process.argv[2] ?? "status";
-if (!["status", "run"].includes(command))
-  throw new Error("Use: node scripts/admin.mjs status|run");
+if (!["status", "run", "test-email"].includes(command))
+  throw new Error("Use: node scripts/admin.mjs status|run|test-email");
 if (!process.env.ADMIN_TOKEN)
   throw new Error("Configure ADMIN_TOKEN in .dev.vars");
 const base =
@@ -10,7 +10,7 @@ const base =
   "https://alerta-docente.miguel-carretero.workers.dev";
 const url = new URL("/admin/" + command, base);
 const response = await fetch(url, {
-  method: command === "run" ? "POST" : "GET",
+  method: command === "status" ? "GET" : "POST",
   headers: { Authorization: "Bearer " + process.env.ADMIN_TOKEN },
   signal: AbortSignal.timeout(120_000),
 });

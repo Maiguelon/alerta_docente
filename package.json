@@ -9,6 +9,7 @@
   "scripts": {
     "status": "node scripts/admin.mjs status",
     "scan": "node scripts/admin.mjs run",
+    "test:email": "node scripts/admin.mjs test-email",
     "secrets:upload": "node scripts/upload-secrets.mjs",
     "dev": "wrangler dev",
     "build": "wrangler deploy --dry-run --outdir dist",

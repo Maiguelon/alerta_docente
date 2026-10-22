@@ -15,7 +15,8 @@ Cobertura inicial: todas las localidades de Tucumán. El remitente y la destinat
 5. Subir secretos: `npm run secrets:upload`.
 6. Mantener `EMAIL_PROVIDER=disabled` hasta disponer de una clave Resend propia y remitente verificado.
 7. Probar con `npm run scan` y consultar `npm run status`.
-8. Activar correo estableciendo `EMAIL_PROVIDER=resend` y volver a publicar.
+8. Ejecutar `npm run test:email`: envía una prueba claramente identificada y guarda su aceptación para no repetirla. Comprobar la entrega en Resend.
+9. Activar correo estableciendo `EMAIL_PROVIDER=resend` y volver a publicar.
 
 Si Wrangler carece del permiso D1, las migraciones pueden ejecutarse en la consola de la base creada exclusivamente para esta herramienta. Registrar los nombres aplicados en la tabla estándar `d1_migrations` para que futuras migraciones no se repitan.
 
@@ -32,6 +33,7 @@ Se entregan hasta dos novedades por ejecución y se permiten hasta cincuenta int
 - `GET /healthz`: última consulta completa exitosa, estado del monitor y si el envío está habilitado. Una consulta exitosa de hace más de treinta minutos devuelve 503.
 - `GET /admin/status`: informe privado, requiere Bearer ADMIN_TOKEN.
 - `POST /admin/run`: revisión manual, requiere el mismo token.
+- `POST /admin/test-email`: prueba de configuración, requiere el mismo token; conserva una clave estable y registra la aceptación.
 - No hay una ruta pública de envío ni una aplicación de registro.
 
 Una falla parcial conserva las publicaciones de la junta afectada. Solo se intentan enviar eventos cuyos detalles se revalidaron en el ciclo actual. El informe incluye errores acotados sin direcciones ni claves.
@@ -55,3 +57,11 @@ No se prometen alertas de fallo si el propio programador o el proveedor de corre
 ## Limitaciones de la fuente
 
 La API es la misma que utiliza la web pública de SIME, no un contrato oficial de integración. Se valida su estructura, pero cambios en nombres de materias o niveles pueden necesitar un ajuste. Siempre se remite a la publicación oficial para requisitos y horarios.
+
+## Evidencia del despliegue inicial
+
+- Worker: `alerta-docente`, base D1 independiente y cron `*/10 * * * *`.
+- Consulta desde Cloudflare del 22/10/2026: cuatro juntas, 147 publicaciones, cero coincidencias actuales y sin errores.
+- Ejecución automática del cron comprobada a las 18:20 del 22/10/2026, con las mismas cuatro juntas procesadas y estado saludable.
+- Prueba de correo del 22/10/2026 a las 18:18 de Argentina: Resend ID `01a1657a-98c6-7a86-a05e-4e5bc24012f0`, eventos Sent y Delivered comprobados en el panel. No se afirma lectura humana ni una carpeta específica de Gmail.
+- No se modificaron registros de Namecheap, MX de Zoho ni el Worker de Gestor Aramis.
